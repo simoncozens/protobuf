@@ -43,6 +43,7 @@
 #include <vector>
 
 #include "absl/strings/match.h"
+#include "absl/strings/substitute.h"
 
 #ifndef PyVarObject_HEAD_INIT
 #define PyVarObject_HEAD_INIT(type, size) PyObject_HEAD_INIT(type) size,
@@ -1100,7 +1101,10 @@ int InitAttributes(CMessage* self, PyObject* args, PyObject* kwargs) {
             reinterpret_cast<RepeatedCompositeContainer*>(container.get());
         ScopedPyObjectPtr iter(PyObject_GetIter(value));
         if (iter == nullptr) {
-          PyErr_SetString(PyExc_TypeError, "Value must be iterable");
+          PyErr_SetString(PyExc_TypeError,
+                          absl::Substitute("Value of field $0 must be iterable",
+                                           descriptor->name())
+                              .c_str());
           return -1;
         }
         ScopedPyObjectPtr next;
@@ -1129,7 +1133,10 @@ int InitAttributes(CMessage* self, PyObject* args, PyObject* kwargs) {
             reinterpret_cast<RepeatedScalarContainer*>(container.get());
         ScopedPyObjectPtr iter(PyObject_GetIter(value));
         if (iter == nullptr) {
-          PyErr_SetString(PyExc_TypeError, "Value must be iterable");
+          PyErr_SetString(PyExc_TypeError,
+                          absl::Substitute("Value of field $0 must be iterable",
+                                           descriptor->name())
+                              .c_str());
           return -1;
         }
         ScopedPyObjectPtr next;
